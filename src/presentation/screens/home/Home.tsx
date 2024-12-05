@@ -1,16 +1,21 @@
 import React from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
+import {FlatList, Platform, Pressable, StyleSheet, View} from 'react-native';
+import {StackScreenProps} from '@react-navigation/stack';
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {getPokemons} from '@/actions/pokemons';
 import {globalTheme} from '@/config/theme/global-theme';
+import {RootStackParams} from '@/presentation/navigator/StackNavigator';
+import CustomIcon from '@/presentation/components/ui/CustomIcon';
+import Loader from '@/presentation/components/ui/Loader';
 import Pokeballbg from '@/presentation/components/ui/Pokeballbg';
 import PokemonCard from '@/presentation/components/pokemons/PokemonCard';
-import Loader from '@/presentation/components/ui/Loader';
 
-export default function Home() {
+interface Props extends StackScreenProps<RootStackParams, 'HomeScreen'> {}
+
+export default function Home({navigation}: Props) {
   const {top} = useSafeAreaInsets();
   const queryClient = useQueryClient();
 
@@ -39,6 +44,20 @@ export default function Home() {
     </Text>
   );
 
+  const buttonSearchPosition = () => {
+    if (Platform.OS === 'android') {
+      return {bottom: 10, right: 10};
+    } else if (Platform.OS === 'ios') {
+      return {bottom: 0, right: 20};
+    } else {
+      return {bottom: 0, right: 20};
+    }
+  };
+
+  const renderSearchIcon = () => (
+    <CustomIcon name="search-circle-outline" color={'white'} size={40} />
+  );
+
   return (
     <View style={[globalTheme.globalMargin]}>
       <Pokeballbg style={style.imgPosition} />
@@ -54,6 +73,20 @@ export default function Home() {
         onEndReached={() => fetchNextPage()}
         showsVerticalScrollIndicator={false}
       />
+
+      <View style={[globalTheme.searchButton, buttonSearchPosition()]}>
+        <Pressable
+          onPress={() => navigation.push('SearchScreen')}
+          style={({pressed}) => [
+            globalTheme.searchButtonIcon,
+            {
+              backgroundColor: '#6A5ACD',
+              transform: [{scale: pressed ? 1.1 : 1}],
+            },
+          ]}>
+          {renderSearchIcon()}
+        </Pressable>
+      </View>
     </View>
   );
 }

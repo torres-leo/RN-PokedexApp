@@ -33,7 +33,17 @@ function StackNavigator() {
           },
         })}
       />
-      <Stack.Screen name="SearchScreen" component={SearchScreen} />
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{
+          headerShown: true,
+          title: 'Go Back',
+          headerTitleStyle: {
+            fontWeight: 600,
+          },
+        }}
+      />
     </Stack.Navigator>
   );
 }
